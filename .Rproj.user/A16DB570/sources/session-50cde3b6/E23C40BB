@@ -1,12 +1,12 @@
 {
-    "id": "45CB59F2",
+    "id": "E23C40BB",
     "path": "~/Git Hub/Masterclass_final_project/index.qmd",
     "project_path": "index.qmd",
     "type": "quarto_markdown",
-    "hash": "846901352",
+    "hash": "2015946710",
     "contents": "",
     "dirty": false,
-    "created": 1728145449619.0,
+    "created": 1728220369919.0,
     "source_on_save": false,
     "relative_order": 1,
     "properties": {
@@ -15,18 +15,18 @@
         "tempName": "Untitled1",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "7,70",
-        "scrollLine": "1",
+        "cursorPosition": "117,0",
+        "scrollLine": "113",
         "docOutlineVisible": "1",
         "rmdVisualCollapsedChunks": "",
         "rmdVisualModeLocation": "820:396.0888977050781"
     },
     "folds": "",
-    "lastKnownWriteTime": 1728220069,
+    "lastKnownWriteTime": 1728245323,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1728220069296,
+    "last_content_update": 1728245323691,
     "read_only": false,
     "read_only_alternatives": []
 }

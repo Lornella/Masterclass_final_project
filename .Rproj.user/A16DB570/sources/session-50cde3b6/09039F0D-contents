@@ -1,0 +1,147 @@
+---
+title: "Influenza A H7N9 in China, 2013"
+format: dashboard
+theme: lux
+---
+
+```{r}
+# Load packages 
+if(!require(pacman)) install.packages("pacman")
+pacman::p_load(tidyverse, outbreaks, bslib, bsicons, shiny, 
+               rgeoboundaries, plotly, htmltools, reactable)
+
+# view data
+# head(outbreaks::fluH7N9_china_2013)
+```
+```{R}
+
+flu_dataset <- outbreaks::fluH7N9_china_2013
+
+total_cases <- nrow(flu_dataset)
+
+total_hosp <- flu_dataset %>% filter(!is.na(date_of_hospitalisation)) %>% 
+  nrow()
+
+total_deaths <- flu_dataset %>% filter(outcome == "Death") %>% 
+  nrow()
+
+
+graph <- flu_dataset %>% 
+  count(province) %>% 
+  mutate(tooltip_label = paste(province, 
+                               n), 
+                               sep = ": ") %>% 
+  ggplot(aes(x= n,
+             y= fct_reorder(province, n), 
+             text= tooltip_label)) +
+  geom_col(fill = "#3f71ab")+
+  labs(x = "Number of Cases", 
+       y = element_blank(), 
+       ) 
+
+graph_plotly <- ggplotly(graph, tooltip = "text")
+
+data_province <- flu_dataset %>% 
+  count(province)
+
+china_map_data <- rgeoboundaries::gb_adm1(country = "China")
+
+# setdiff(data_province$province, china_map_data$shapeName)
+# setdiff(china_map_data$shapeName, data_province$province)
+
+china_map_data <- china_map_data %>%
+  mutate(province = str_trim(
+    str_remove(shapeName, "Province|Municipality|Autonomous Region")
+  ))
+
+china_map_data_joined <- china_map_data %>% 
+  left_join(data_province, by = "province") %>%
+  mutate(tooltip_label = paste0(province, ": ", n))
+
+china_map_plot <- ggplot(china_map_data_joined) +
+  geom_sf(aes(fill = n, text = tooltip_label)) + 
+  theme_void() +
+  labs(fill = "Number of Cases") + 
+  theme(legend.position = "none")
+
+china_map_plot_ggplotly <- 
+  ggplotly(china_map_plot, tooltip = "text")
+  
+```
+
+
+
+# HOME 
+
+## Row1 {hight=20%}
+
+
+```{R}
+value_box(
+  title = "Total Cases",
+  value = total_cases,
+  showcase = bsicons::bs_icon("virus"),
+  theme = value_box_theme(bg = "#518fd6")
+)
+
+```
+
+```{R}
+value_box(
+  title = "Total Hospitalizations",
+  value = total_hosp,
+  showcase = bsicons::bs_icon("hospital"),
+  theme = value_box_theme(bg = "#214773")
+)
+
+```
+
+```{R}
+value_box(
+  title = "Total Deaths",
+  value = total_deaths,
+  showcase = bsicons::bs_icon("file-medical"),
+  theme = value_box_theme(bg = "#3f71ab")
+)
+
+```
+
+
+## Row 2 {heigth=80%}
+
+### col1 {width=30%}
+
+```{R title = "Number of cases by Province"}
+
+graph_plotly 
+```
+
+### col2 {width=70%}
+
+```{R title = "Map of Provinces by Number of Cases"}
+china_map_plot_ggplotly
+```
+
+# DOWNLOAD DATA
+The data used in this dashboard is shown below and can be downloaded as a CSV. 
+
+```{R}
+
+htmltools::browsable(
+  
+  tagList(
+    reactable(
+      outbreaks::fluH7N9_china_2013,
+      elementId = "fluH7N9_china_2013",
+      searchable = T, 
+      filterable = T),
+  
+    tags$button("Download as CSV", 
+                onclick = "Reactable.downloadDataCSV('fluH7N9_china_2013')")
+    
+    
+  )
+)
+
+
+```
