@@ -56,12 +56,12 @@ pop <- pop_raw %>% pivot_longer(cols = `1960`:`2023`, names_to = "year", values_
   rename(country_name = `Country Name`, country_code = `Country Code`) 
 
 ## Data merging
-setdiff(counts_measles$country_code, pop$country_code)
+#setdiff(counts_measles$country_code, pop$country_code)
 #The output tell us that the following codes are not in pop: "AIA" "COK" "MSR" "NIU" "TKL" "WLF"
 #From Chatgpt: These codes correspond to small islands and territories, many of which have unique political relationships, such as being dependencies or in free association with other countries. 
 #We can get rid of these. 
 
-setdiff(pop$country_code, counts_measles$country_code)
+#setdiff(pop$country_code, counts_measles$country_code)
 #The output tell us that the following codes are missing in counts_measles: "AFE" "AFW" "ARB" "CEB" "CHI" "CSS" "EAP" "EAR" "EAS" "ECA" "ECS" "EMU" "EUU" "FCS" "FRO" "GIB" "GRL" "HIC" "HPC" "IBD" "IBT" "IDA" "IDB" "IDX" "IMN" "INX" "LAC" "LCN" "LDC" "LIC" "LIE" "LMC" "LMY" "LTE" "MAF" "MEA" "MIC" "MNA" "NAC" "OED" "OSS" "PRE" "PRI" "PSS" "PST" "SAS" "SSA" "SSF" "SST" "TEA" "TEC" "TLA" "TMN" "TSA" "TSS" "UMC" "VIR" "WLD" "XKX"
 # From ChatGPT: These codes represent regions, income classifications, or groups of countries, rather than individual nations. Many of them are used by international organizations like the World Bank to classify countries by income level, development stage, or geographic area.
 # We can get rid of these.
@@ -79,11 +79,11 @@ vacc_measles <- vacc_measles %>%
                                     "country.name",
                                     "iso3c"))
 
-setdiff(merged_pop_cases$country_code, vacc_measles$country_code)
+#setdiff(merged_pop_cases$country_code, vacc_measles$country_code)
 #The output shows that 30 country codes are missing in vacc_measles. These codes represent a mix of independent countries and territories across different regions of the world. 
 #We will keep these in. 
 
-setdiff(vacc_measles$country_code, merged_pop_cases$country_code)
+#setdiff(vacc_measles$country_code, merged_pop_cases$country_code)
 #All country codes in vacc_measles are present in merged_pop_cases. 
 
 #Merging with vacc and cleaning
@@ -115,7 +115,75 @@ merged_pop_cases_vacc <- merged_pop_cases_vacc %>%
 
 ```
 
+```{r}
+data2020 <- merged_pop_cases_vacc %>% 
+  dplyr::filter(year == 2020)
 
+number_of_countries_in_dataset <- data2020 %>% 
+  summarise(n = n())
+
+number_of_countries_over_95_in2020 <- data2020 %>% 
+  filter(vaccination_coverage_in_percent >=95) %>% 
+  summarise(n = n())
+
+lowest_vacc_coverage_2020_country <- data2020 %>% 
+  dplyr::arrange(vaccination_coverage_in_percent) %>% 
+  head(1) %>% 
+  pull(country_name)
+
+lowest_vacc_coverage_2020_number <- data2020 %>%  
+  dplyr::arrange(vaccination_coverage_in_percent) %>% 
+  head(1) %>% 
+  pull(vaccination_coverage_in_percent) 
+  round(1)
+  
+highest_incidence_2020_country <- data2020 %>% 
+  dplyr::arrange(-incidence) %>% 
+  head(1) %>% 
+  pull(country_name)
+
+highest_incidence_2020_number <- data2020 %>%  
+  dplyr::arrange(-incidence) %>% 
+  head(1) %>% 
+  pull(incidence) 
+  round(1)
+   
+  
+```
+
+
+```{R}
+
+#Get country shapes from rnaturalearth packages
+country_shapes <- rnaturalearth::ne_countries()
+
+#setdiff(data2020$country_code, country_shapes$adm0_a3)
+#The difference are small islands. Ok to let them out.
+
+#vaccination coverage map
+vac_map <- left_join(country_shapes, data2020, 
+          by = c("adm0_a3" = "country_code")) %>% 
+  mutate(tooltip_label = paste0(country_name, " : ", 
+                              vaccination_coverage_in_percent, " %")) %>% 
+  ggplot()+
+  geom_sf(aes(fill = vaccination_coverage_in_percent, text = tooltip_label))+
+  theme_void()+
+  theme(legend.position = "none")
+
+vac_map_ggplotly <- ggplotly(vac_map, tooltip = "text")
+
+#incidence map
+inc_map <- left_join(country_shapes, data2020, 
+          by = c("adm0_a3" = "country_code")) %>% 
+  mutate(tooltip_label = paste0(country_name, " : ", 
+                              round(incidence, 2), " per 100000")) %>% 
+  ggplot()+
+  geom_sf(aes(fill = incidence, text = tooltip_label))+
+  theme_void()+
+  theme(legend.position = "none")
+
+inc_map_ggplotly <- ggplotly(inc_map, tooltip = "text")
+```
 
 
 # Overview
@@ -123,8 +191,8 @@ merged_pop_cases_vacc <- merged_pop_cases_vacc %>%
 ## Row1 {hight="25%"}
 
 ### col1 {width="80%"}
-```{R}
-1+1
+```{R title = "World map showing measles vaccination coverage in children receiving two doses" }
+vac_map_ggplotly
 ```
 
 ### col2 {width="20%"}
@@ -141,8 +209,9 @@ merged_pop_cases_vacc <- merged_pop_cases_vacc %>%
 ## Row2 {hight="25%"}
 
 ### col1 {width="80%"}
-```{R}
-1+1
+
+```{R title = "World map displaying measles incidence rates"}
+inc_map_ggplotly
 ```
 
 ### col2 {width="20%"}
@@ -156,39 +225,51 @@ merged_pop_cases_vacc <- merged_pop_cases_vacc %>%
 
 ```
 
-## Row3 {hight="25%"}
-Graph
-
-## Row4 {hight="25%"}
-Graph
-
 
 # Vaccination coverage
 
 ## Row1 {hight="50%"}
-Map
+```{R}
+2+2
+
+```
 
 ## Row2 {hight="50%"}
 
 ### Col1 
-Table
+```{R}
+2+2
+
+```
 
 ### Col2
-Table
+```{R}
+2+2
+
+```
 
 
 # Incidences
 
 ## Row1 {hight="50%"}
-Map
+```{R}
+2+2
+
+```
 
 ## Row2 {hight="50%"}
 
 ### Col1 
-Table
+```{R}
+2+2
+
+```
 
 ### Col2
-Table
+```{R}
+2+2
+
+```
 
 
 # About
