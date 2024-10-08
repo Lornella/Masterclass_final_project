@@ -134,7 +134,7 @@ lowest_vacc_coverage_2020_country <- data2020 %>%
 lowest_vacc_coverage_2020_number <- data2020 %>%  
   dplyr::arrange(vaccination_coverage_in_percent) %>% 
   head(1) %>% 
-  pull(vaccination_coverage_in_percent) 
+  pull(vaccination_coverage_in_percent) %>% 
   round(1)
   
 highest_incidence_2020_country <- data2020 %>% 
@@ -145,7 +145,7 @@ highest_incidence_2020_country <- data2020 %>%
 highest_incidence_2020_number <- data2020 %>%  
   dplyr::arrange(-incidence) %>% 
   head(1) %>% 
-  pull(incidence) 
+  pull(incidence) %>% 
   round(1)
    
   
