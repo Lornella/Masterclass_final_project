@@ -129,13 +129,13 @@ number_of_countries_vacc_over_95_in2020 <- data2020 %>%
   filter(vaccination_coverage_in_percent >=95) %>% 
   summarise(n = n())
 
-perc_vacc_over_95 <- number_of_countries_vacc_over_95_in2020/number_of_countries_in_dataset*100
+perc_vacc_over_95 <- round(number_of_countries_vacc_over_95_in2020/number_of_countries_in_dataset*100, 1)
 
 number_of_countries_inc_lower_1_in2020 <- data2020 %>% 
   filter(incidence < 1) %>% 
   summarise(n = n())
 
-perc_inc_lower_1 <- number_of_countries_inc_lower_1_in2020/number_of_countries_in_dataset*100
+perc_inc_lower_1 <- round(number_of_countries_inc_lower_1_in2020/number_of_countries_in_dataset*100, 1)
 
 lowest_vacc_coverage_2020_country <- data2020 %>% 
   dplyr::arrange(vaccination_coverage_in_percent) %>% 
@@ -220,17 +220,17 @@ inc_map_ggplotly <- ggplotly(inc_map, tooltip = "text")
 
 ## Row1 {hight="50%"}
 
-### col1 {width="75%"}
+### col1 {width="65%"}
 
 ```{R title = "World map showing measles vaccination coverage in children receiving two doses (data from 2020)" }
 vac_map_ggplotly
 ```
 
-### col2 {width="25%"}
+### col2 {width="35%"}
 
 ```{R}
 value_box(
-  title = "Countries reaching 95% vaccine coverage",
+  title = "Percent of countries reaching 95% coverage",
   value = paste(perc_vacc_over_95, " %"),
   showcase = bsicons::bs_icon("file-earmark-medical"),
   theme = value_box_theme(bg = "#91debf")
@@ -240,8 +240,9 @@ value_box(
 
 ```{R}
 value_box(
-  title = "Country with lowes vaccine coverage",
-  value = total_cases,
+  title = "Lowest measles vaccine coverage in 2020",
+  value = lowest_vacc_coverage_2020_number,
+  p(paste0("(",lowest_vacc_coverage_2020_country,")")),
   showcase = bsicons::bs_icon("file-earmark-medical-fill"),
   theme = value_box_theme(bg = "#ffdf9c")
 )
@@ -250,21 +251,32 @@ value_box(
 
 ## Row2 {hight="50%"}
 
-### col1 {width="75%"}
+### col1 {width="65%"}
 
 ```{R title = "World map displaying measles incidence rates (data from 2020)"}
 inc_map_ggplotly
 ```
 
-### col2 {width="25%"}
+### col2 {width="35%"}
 
 ```{R}
-2+2
+value_box(
+  title = "Percent of countries with incidence < 1",
+  value = paste(perc_inc_lower_1, " %"),
+  showcase = bsicons::bs_icon("virus2"),
+  theme = value_box_theme(bg = "#91debf")
+)
 
 ```
 
 ```{R}
-2+2
+value_box(
+  title = "Highest incidence in 2020",
+  value = highest_incidence_2020_number,
+  p(paste0("(",highest_incidence_2020_country,")")),
+  showcase = bsicons::bs_icon("file-earmark-medical-fill"),
+  theme = value_box_theme(bg = "#ffdf9c")
+)
 
 ```
 
@@ -320,7 +332,7 @@ inc_map_ggplotly
 
 # About
 
-### **Measles - a short introduction**
+**Measles - a short introduction**
 
 Measles is a highly contagious viral disease caused by the measles virus, primarily affecting children but also posing risks to adults without immunity. It is transmitted through respiratory droplets from coughing, sneezing, or close contact with an infected person. Symptoms typically appear 10 to 14 days after exposure and include high fever, cough, runny nose, and inflamed eyes, followed by a characteristic red rash that spreads across the body.
 
@@ -328,16 +340,16 @@ Though generally self-limiting, measles can lead to severe complications such as
 
 The two-dose measles vaccine is highly effective in preventing the disease and plays a crucial role in public health. Global vaccination campaigns have made substantial progress toward measles elimination, though outbreaks continue to occur, especially in regions with low vaccination coverage. Ensuring widespread immunization remains essential to controlling the spread of this highly infectious disease.
 
-### **References**
+**References**
 
-#### **Data**
+**Data**
 
-Vaccinations coverage data: Gapminder, <https://www.gapminder.org/data/>
+-   Vaccinations coverage data: Gapminder, <https://www.gapminder.org/data/>
 
-Measles counts data: World Health Organisation, <https://www.who.int/data/gho/data/indicators/indicator-details/GHO/measles---number-of-reported-cases>
+-   Measles counts data: World Health Organisation, <https://www.who.int/data/gho/data/indicators/indicator-details/GHO/measles---number-of-reported-cases>
 
-Population data: World Bank Group, <https://data.worldbank.org/indicator/SP.POP.TOTL>
+-   Population data: World Bank Group, <https://data.worldbank.org/indicator/SP.POP.TOTL>
 
-#### Text
+**Text**
 
 Short introduction about measles: ChatGPT
