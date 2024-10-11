@@ -3,7 +3,7 @@ title: "Measles Dashboard"
 author: "Ornella Luminati"
 format: 
  dashboard:
-   logo: images/vaccine-3741298_640.jpg
+   logo: images/measles_icon.png
    nav-buttons: github
    github: https://github.com/Lornella/Masterclass_final_project
 theme: minty
@@ -21,6 +21,9 @@ pacman::p_load(here, readxl, tidyverse, countrycode, bslib, bsicons, shiny, rgeo
 ```
 
 ```{R}
+##Create a palette
+color_scale <- c("#78c2ad", "#6caf9c", "#609b8a", "#548879", "#487468", "#3c6157", "#304e45", "#243a34", "#182723", "#0c1311", "#000000")
+
 ##Load data from csv and xls files as well as from the package rnaturalearth
 
 vacc_measles_dataset <- read_csv(here("data/gapminder_mcv2_vacc.csv"))
@@ -167,8 +170,19 @@ vac_map <- left_join(country_shapes, data2020,
                               vaccination_coverage_in_percent, " %")) %>% 
   ggplot()+
   geom_sf(aes(fill = vaccination_coverage_in_percent, text = tooltip_label))+
-  theme_void()+
-  theme(legend.position = "none")
+  scale_fill_gradientn(colors = color_scale,
+    name = "Vaccination coverage in %", 
+    breaks = c(0, 30, 60, 99),
+    labels = c("0", "30", "60", "99"), 
+    guide = guide_colorbar(barwidth = 10, barheight = 1)  
+  ) +
+  theme_void() +
+  theme(
+    legend.position = "right",
+    legend.title = element_text(size = 12), 
+    legend.text = element_text(size = 10) 
+  )
+
 
 vac_map_ggplotly <- ggplotly(vac_map, tooltip = "text")
 
@@ -179,8 +193,18 @@ inc_map <- left_join(country_shapes, data2020,
                               round(incidence, 2), " per 100000")) %>% 
   ggplot()+
   geom_sf(aes(fill = incidence, text = tooltip_label))+
-  theme_void()+
-  theme(legend.position = "none")
+  scale_fill_gradientn(colors = color_scale,
+    name = "Incidence per 100 000", 
+    breaks = c(0, 20, 50, 88.62),
+    labels = c("0", "20", "50", "88.62"), 
+    guide = guide_colorbar(barwidth = 10, barheight = 1)  
+  ) +
+  theme_void() +
+  theme(
+    legend.position = "right",
+    legend.title = element_text(size = 12), 
+    legend.text = element_text(size = 10) 
+  )
 
 inc_map_ggplotly <- ggplotly(inc_map, tooltip = "text")
 ```
@@ -188,14 +212,14 @@ inc_map_ggplotly <- ggplotly(inc_map, tooltip = "text")
 
 # Overview
 
-## Row1 {hight="25%"}
+## Row1 {hight="50%"}
 
-### col1 {width="80%"}
-```{R title = "World map showing measles vaccination coverage in children receiving two doses" }
+### col1 {width="75%"}
+```{R title = "World map showing measles vaccination coverage in children receiving two doses (data from 2020)" }
 vac_map_ggplotly
 ```
 
-### col2 {width="20%"}
+### col2 {width="25%"}
 ```{R}
 2+2
 
@@ -206,15 +230,15 @@ vac_map_ggplotly
 
 ```
 
-## Row2 {hight="25%"}
+## Row2 {hight="50%"}
 
-### col1 {width="80%"}
+### col1 {width="75%"}
 
-```{R title = "World map displaying measles incidence rates"}
+```{R title = "World map displaying measles incidence rates (data from 2020)"}
 inc_map_ggplotly
 ```
 
-### col2 {width="20%"}
+### col2 {width="25%"}
 ```{R}
 2+2
 
