@@ -216,17 +216,21 @@ inc_map <- left_join(country_shapes, data2020,
 inc_map_ggplotly <- ggplotly(inc_map, tooltip = "text")
 ```
 
+
 # Overview
 
 ## Row1 {hight="50%"}
 
 ### col1 {width="75%"}
 
+
 ```{R title = "World map showing measles vaccination coverage in children receiving two doses (data from 2020)" }
 vac_map_ggplotly
 ```
 
+
 ### col2 {width="25%"}
+
 
 ```{R}
 value_box(
@@ -248,75 +252,92 @@ value_box(
 
 ```
 
+
 ## Row2 {hight="50%"}
 
 ### col1 {width="75%"}
+
 
 ```{R title = "World map displaying measles incidence rates (data from 2020)"}
 inc_map_ggplotly
 ```
 
+
 ### col2 {width="25%"}
 
-```{R}
-2+2
-
-```
 
 ```{R}
 2+2
 
 ```
+
+```{R}
+2+2
+
+```
+
 
 # Vaccination coverage
 
 ## Row1 {hight="50%"}
 
+
 ```{R}
 2+2
 
 ```
+
 
 ## Row2 {hight="50%"}
 
 ### Col1
 
+
 ```{R}
 2+2
 
 ```
+
 
 ### Col2
 
+
 ```{R}
 2+2
 
 ```
+
 
 # Incidences
 
 ## Row1 {hight="50%"}
 
+
 ```{R}
 2+2
 
 ```
+
 
 ## Row2 {hight="50%"}
 
 ### Col1
 
+
 ```{R}
 2+2
 
 ```
+
 
 ### Col2
 
+
 ```{R}
 2+2
 
 ```
+
 
 # About
 
@@ -341,3 +362,4 @@ Population data: World Bank Group, <https://data.worldbank.org/indicator/SP.POP.
 #### Text
 
 Short introduction about measles: ChatGPT
+
