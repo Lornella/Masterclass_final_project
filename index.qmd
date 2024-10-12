@@ -223,7 +223,7 @@ inc_map_ggplotly <- ggplotly(inc_map, tooltip = "text")
 
 
 ```{R}
-custom_color_scale <- list(
+custum_color_scale <- list(
   c(0, paste0("rgb(", rgb_color_scale[1,1], ",", rgb_color_scale[2,1], ",", rgb_color_scale[3,1], ")")),   
   c(0.3, paste0("rgb(", rgb_color_scale[1,3], ",", rgb_color_scale[2,3], ",", rgb_color_scale[3,3], ")")), 
   c(0.6, paste0("rgb(", rgb_color_scale[1,7], ",", rgb_color_scale[2,7], ",", rgb_color_scale[3,7], ")")),     
@@ -238,7 +238,7 @@ vac_map_animated_plotly <- merged_pop_cases_vacc %>%
     z = ~vaccination_coverage_in_percent, 
     text = ~paste(country_name, ":", vaccination_coverage_in_percent, "% (", year, ")"),
     frame = ~year,
-    colorscale = custom_color_scale,  
+    colorscale = custum_color_scale,  
     marker = list(line = list(color = "black", width = 0.5)),
     colorbar = list(
       title = "Vaccination Coverage (%)",
