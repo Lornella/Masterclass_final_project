@@ -1,5 +1,0 @@
-"0","perc_inc_lower_1 <- number_of_countries_inc_lower_1_in2020/number_of_countries_in_dataset*100
-"
-"2","Errore in Ops.data.frame(number_of_countries_inc_lower_1_in2020, number_of_countries_in_dataset) : 
-  ‘/’ è definito solo per data frame di dimensioni identiche
-"
