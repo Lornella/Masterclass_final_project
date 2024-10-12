@@ -27,6 +27,16 @@ color_scale <- c("#78c2ad", "#6caf9c", "#609b8a", "#548879", "#487468", "#3c6157
 
 rgb_color_scale <- col2rgb(color_scale)
 
+#Define base colors
+base_colors <- c("#78c2ad", "#f3969a", "#ffce67")
+
+#Create a color palette of 10 colors
+colors_lines_5 <- colorRampPalette(base_colors)(5)
+
+colors_lines_10 <- c("#4DAF91", "#B8E6DF", "#D66368", "#F2A6A2", "#E6B800", "#FFEC99", "#009B77", "#D32F2F", "#FFC107","#795548" 
+)
+
+
 ##Load data from csv and xls files as well as from the package rnaturalearth
 
 vacc_measles_dataset <- read_csv(here("data/gapminder_mcv2_vacc.csv"))
@@ -223,13 +233,36 @@ inc_map_ggplotly <- ggplotly(inc_map, tooltip = "text")
 
 
 ```{R}
-custum_color_scale <- list(
+##Define colors for Maps
+custom_color <- list(
   c(0, paste0("rgb(", rgb_color_scale[1,1], ",", rgb_color_scale[2,1], ",", rgb_color_scale[3,1], ")")),   
   c(0.3, paste0("rgb(", rgb_color_scale[1,3], ",", rgb_color_scale[2,3], ",", rgb_color_scale[3,3], ")")), 
   c(0.6, paste0("rgb(", rgb_color_scale[1,7], ",", rgb_color_scale[2,7], ",", rgb_color_scale[3,7], ")")),     
   c(0.99, paste0("rgb(", rgb_color_scale[1,11], ",", rgb_color_scale[2,11], ",", rgb_color_scale[3,11], ")"))     
 )
 
+custom_color_scale <- list(
+  c(as.numeric(custom_color[[1]][1]), custom_color[[1]][2]),   
+  c(as.numeric(custom_color[[2]][1]), custom_color[[2]][2]),   
+  c(as.numeric(custom_color[[3]][1]), custom_color[[3]][2]),
+  c(as.numeric(custom_color[[4]][1]), custom_color[[4]][2])
+)
+
+custom_color_inc <- list(
+  c(0, paste0("rgb(", rgb_color_scale[1,1], ",", rgb_color_scale[2,1], ",", rgb_color_scale[3,1], ")")),   
+  c(20, paste0("rgb(", rgb_color_scale[1,3], ",", rgb_color_scale[2,3], ",", rgb_color_scale[3,3], ")")), 
+  c(50, paste0("rgb(", rgb_color_scale[1,7], ",", rgb_color_scale[2,7], ",", rgb_color_scale[3,7], ")")),     
+  c(88.62, paste0("rgb(", rgb_color_scale[1,11], ",", rgb_color_scale[2,11], ",", rgb_color_scale[3,11], ")"))     
+)
+
+custom_color_scale_inc <- list(
+  c(as.numeric(custom_color[[1]][1]), custom_color[[1]][2]),   
+  c(as.numeric(custom_color[[2]][1]), custom_color[[2]][2]),   
+  c(as.numeric(custom_color[[3]][1]), custom_color[[3]][2]),
+  c(as.numeric(custom_color[[4]][1]), custom_color[[4]][2])
+)
+
+##Vac map animated
 vac_map_animated_plotly <- merged_pop_cases_vacc %>%
   left_join(country_shapes, by = c("country_code" = "adm0_a3")) %>%
   plot_ly(
@@ -238,7 +271,7 @@ vac_map_animated_plotly <- merged_pop_cases_vacc %>%
     z = ~vaccination_coverage_in_percent, 
     text = ~paste(country_name, ":", vaccination_coverage_in_percent, "% (", year, ")"),
     frame = ~year,
-    colorscale = `custum_color_scale`,  
+    colorscale = custom_color_scale,  
     marker = list(line = list(color = "black", width = 0.5)),
     colorbar = list(
       title = "Vaccination Coverage (%)",
@@ -262,8 +295,64 @@ vac_map_animated_plotly <- merged_pop_cases_vacc %>%
     currentvalue = list(prefix = "Year: ")
   )
 
-```
+##Incidence map animated
+vac_map_animated_plotly <- merged_pop_cases_vacc %>%
+  left_join(country_shapes, by = c("country_code" = "adm0_a3")) %>%
+  plot_ly(
+    type = 'choropleth',  
+    locations = ~country_code, 
+    z = ~incidence, 
+    text = ~paste(country_name, ":", incidence, "% (", year, ")"),
+    frame = ~year,
+    colorscale = custom_color_scale_inc,  
+    marker = list(line = list(color = "black", width = 0.5)),
+    colorbar = list(
+      title = "Incidence per 100 000",
+      tickvals = c(0, 20, 50, 88.62),
+      ticktext = c("0", "20", "50", "88.62")
+    )
+  ) %>%
+  layout(
+    title = "Incidence Over Time",
+    geo = list(
+      showframe = FALSE,
+      projection = list(type = 'natural earth')
+    )
+  ) %>%
+  animation_opts(
+    frame = 1000,  
+    transition = 0, 
+    easing = "linear"
+  ) %>%
+  animation_slider(
+    currentvalue = list(prefix = "Year: ")
+  )
 
+```
+```{R}
+top_10_vacc_countries <- data2020 %>% 
+  arrange(-vaccination_coverage_in_percent) %>% 
+  head(10) %>% 
+  pull(country_code)
+
+top_10_vacc <- merged_pop_cases_vacc %>% 
+  filter(country_code %in% `top_10_vacc_countries`) %>% 
+  arrange(year) 
+
+vac_line <- ggplot(top_10_vacc)+
+  geom_line(aes(x = year, y = vaccination_coverage_in_percent, color = country_name))+
+  scale_color_manual(values = colors_lines_10) +
+  scale_x_continuous(breaks = seq(2010, 2020, by = 2)) +
+  labs(title = "Vaccination Coverage Over Years",
+       subtitle = "Top 10 countries for vaccination coverage in 2020",
+       x = "Year",
+       y = "Vaccination Coverage (%)", 
+       color = "Country") +
+  theme_minimal()
+
+vac_line_plotly <- ggplotly(vac_line)
+
+```
 
 # Overview
 
@@ -343,7 +432,7 @@ vac_map_animated_plotly
 ### Col1
 
 ```{R}
-2+2
+vac_line_plotly
 
 ```
 
@@ -359,7 +448,7 @@ vac_map_animated_plotly
 ## Row1 {hight="50%"}
 
 ```{R}
-2+2
+vac_map_animated_plotly
 
 ```
 
@@ -368,7 +457,7 @@ vac_map_animated_plotly
 ### Col1
 
 ```{R}
-2+2
+
 
 ```
 
@@ -402,3 +491,4 @@ The two-dose measles vaccine is highly effective in preventing the disease and p
 **Text**
 
 -   Short introduction about measles: ChatGPT
+-   Measles-happy-logo: ChatGPT
