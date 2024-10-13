@@ -3,7 +3,7 @@ title: "Measles Dashboard"
 author: "Ornella Luminati"
 format: 
  dashboard:
-   logo: images/measles_icon.png
+   logo: images/measles_icon_my_colors.png
    nav-buttons: github
    github: https://github.com/Lornella/Masterclass_final_project
    scrolling: true
@@ -262,7 +262,7 @@ custom_color_scale_inc <- list(
 )
 
 ##Vac map animated
-vac_map_animated_plotly <- merged_pop_cases_vacc %>%
+vac_map_animated <- merged_pop_cases_vacc %>%
   left_join(country_shapes, by = c("country_code" = "adm0_a3")) %>%
   plot_ly(
     type = 'choropleth',  
@@ -295,7 +295,7 @@ vac_map_animated_plotly <- merged_pop_cases_vacc %>%
   )
 
 ##Incidence map animated
-vac_map_animated_plotly <- merged_pop_cases_vacc %>%
+inc_map_animated <- merged_pop_cases_vacc %>%
   left_join(country_shapes, by = c("country_code" = "adm0_a3")) %>%
   plot_ly(
     type = 'choropleth',  
@@ -430,7 +430,7 @@ bottom_10_inc_countries <- data2020 %>%
   head(10) %>% 
   pull(country_code)
 
-bottom_10_inc <- merged_pop_cases_inc %>% 
+bottom_10_inc <- merged_pop_cases_vacc %>% 
   filter(country_code %in% `bottom_10_inc_countries`) %>% 
   arrange(year) %>% 
   rename(Country = country_name) %>% 
@@ -481,7 +481,7 @@ value_box(
 ```{R}
 value_box(
   title = "Lowest measles vaccine coverage in 2020",
-  value = lowest_vacc_coverage_2020_number,
+  value = paste(lowest_vacc_coverage_2020_number, " %"),
   p(paste0("(",lowest_vacc_coverage_2020_country,")")),
   showcase = bsicons::bs_icon("file-earmark-medical-fill"),
   theme = value_box_theme(bg = "#ffdf9c")
@@ -501,7 +501,7 @@ inc_map_ggplotly
 
 ```{R}
 value_box(
-  title = "Percent of countries with incidence < 1",
+  title = "Percent of countries with incidence < 1 per 100 000",
   value = paste(perc_inc_lower_1, " %"),
   showcase = bsicons::bs_icon("virus2"),
   theme = value_box_theme(bg = "#91debf")
@@ -511,7 +511,7 @@ value_box(
 
 ```{R}
 value_box(
-  title = "Highest incidence in 2020",
+  title = "Highest incidence (per 100 000) in 2020",
   value = highest_incidence_2020_number,
   p(paste0("(",highest_incidence_2020_country,")")),
   showcase = bsicons::bs_icon("file-earmark-medical-fill"),
@@ -525,32 +525,32 @@ value_box(
 ## Row1
 
 ```{R}
-vac_map_animated_plotly
+vac_map_animated
 ```
 
 ## Row2
 
 ### Col1 {.tabset}
 
-```{R title: "Graph" }
+```{R title = "Graph top 10" }
 graph_vac_plotly_top_10
 
 ```
 
-```{R title: "Table" }
+```{R title = "Table top 10" }
 reacting_tab_vacc_top_10
 
 ```
 
 ### Col2 {.tabset}
 
-```{R title = "Graph"}
+```{R title = "Graph bottom 10"}
 
 graph_vac_plotly_bottom_10
 
 ```
 
-```{R title = "Table"}
+```{R title = "Table bottom 10"}
 
 reacting_tab_vacc_bottom_10
 
@@ -561,7 +561,7 @@ reacting_tab_vacc_bottom_10
 ## Row1 {hight="50%"}
 
 ```{R}
-vac_map_animated_plotly
+inc_map_animated
 
 ```
 
@@ -569,30 +569,29 @@ vac_map_animated_plotly
 
 ### Col1 {.tabset}
 
-```{R title: "Graph" }
-graph_inc_plotly_top_10
-
-```
-
-```{R title: "Table" }
-reacting_tab_inc_top_10
-
-```
-
-### Col2 {.tabset}
-
-```{R title = "Graph"}
+```{R title = "Graph lowest 10"}
 
 graph_inc_plotly_bottom_10
 
 ```
 
-```{R title = "Table"}
+```{R title = "Table lowest 10"}
 
 reacting_tab_inc_bottom_10
 
 ```
 
+### Col2 {.tabset}
+
+```{R title = "Graph highest 10" }
+graph_inc_plotly_top_10
+
+```
+
+```{R title = "Table highest 10" }
+reacting_tab_inc_top_10
+
+```
 
 # About
 
