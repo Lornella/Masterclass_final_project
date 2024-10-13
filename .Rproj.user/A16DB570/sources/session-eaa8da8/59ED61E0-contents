@@ -511,7 +511,7 @@ value_box(
 
 ```{R}
 value_box(
-  title = "Highest incidence (per 100 000) in 2020",
+  title = "Highest incidence \n(per 100 000) in 2020",
   value = highest_incidence_2020_number,
   p(paste0("(",highest_incidence_2020_country,")")),
   showcase = bsicons::bs_icon("file-earmark-medical-fill"),
